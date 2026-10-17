@@ -6,13 +6,14 @@ Veloz App Review is an open-source plugin for Claude. It runs on your computer a
 
 ## What the plugin reads
 
-- **App Store Connect data**, when you connect it: your app list, App Store versions, review submission states, and the App Review messages you choose to have it read. With an API key, this comes from Apple's API. In browser mode, Claude reads the App Store Connect pages in a browser where you're signed in.
+- **App Store Connect data**, when you connect it: your app list, App Store versions, review submission states, and the App Review messages you choose to have it read. With an API key, this comes from Apple's API. With Helm's CLI, it comes from read-only `helm-asc` commands on your Mac. In browser mode, Claude reads the App Store Connect pages in a browser where you're signed in.
 - **Your app project's source files**, when you run the submission check. They're read on your computer.
 - **Your App Store Connect API key file**, only to sign requests to Apple. It's read from where you keep it. The plugin never copies, uploads or stores it.
 
 ## Where data goes
 
 - `api.appstoreconnect.apple.com` (Apple): read-only requests, signed with your own key, in API key mode.
+- Helm's `helm-asc` tool, if you have it installed: it makes the requests to Apple with the account you connected in Helm, a separate product with its own [privacy policy](https://helm-app.com/privacy/). The skill only runs its read commands.
 - `appstoreconnect.apple.com` (Apple): pages you're already signed in to, in browser mode. The plugin never asks for or stores your Apple ID password or verification codes.
 - `developer.apple.com` (Apple): to read the current App Review Guidelines.
 - `fonts.googleapis.com` and `fonts.gstatic.com` (Google): fonts load when you open a report page.

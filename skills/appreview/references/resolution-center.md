@@ -5,6 +5,12 @@ you which apps and versions are rejected; this file covers getting the "why".
 
 Try the routes in this order and stop at the first one that works.
 
+## Route 0: Helm's CLI
+
+If the user has Helm Pro's `helm-asc` on their Mac, it can return the App Review messages for
+every app, including resolved rejections. Follow `helm-cli.md`. It's the fastest route when
+available; fall back to the routes below for anything it doesn't return.
+
 ## Route 1: the user's own signed-in browser
 
 Use this only if the session has a browser tool (the built-in browser or Claude in

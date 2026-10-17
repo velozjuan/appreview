@@ -1,12 +1,15 @@
 ---
 name: appreview
-description: App Store review helper (run as /appreview). Finds every rejected or Unresolved Issues submission across a developer's App Store Connect account (with an ASC API key or by checking App Store Connect in the browser), maps each rejection to the App Review Guidelines with fixes and a draft reply, and can also scan an iOS app project before submission for likely guideline problems, including repeats of the account's past rejections. Publishes the result as a report artifact. Use whenever someone mentions App Store rejections, App Review, Resolution Center, a guideline number like 2.1, 4.3 or 5.1.1, "why was my app rejected", Unresolved Issues, Metadata Rejected, or wants to check an app before submitting it to the App Store.
+description: App Store review helper (run as /appreview). Finds every rejected or Unresolved Issues submission across a developer's App Store Connect account (with Helm's helm-asc CLI, an ASC API key, or by checking App Store Connect in the browser), maps each rejection to the App Review Guidelines with fixes and a draft reply, and can also scan an iOS app project before submission for likely guideline problems, including repeats of the account's past rejections. Publishes the result as a report artifact. Use whenever someone mentions App Store rejections, App Review, Resolution Center, a guideline number like 2.1, 4.3 or 5.1.1, "why was my app rejected", Unresolved Issues, Metadata Rejected, or wants to check an app before submitting it to the App Store.
 ---
 
 # /appreview
 
 Three jobs, one report:
 
+- **Rejections (Helm CLI mode)**: if the user has Helm Pro's `helm-asc` tool on their Mac, it
+  can read the App Review messages for all their apps, including rejections that were later
+  resolved. The most complete source of reasons and history when it's available.
 - **Rejections (API key mode)**: scripts call the App Store Connect API with the user's ASC
   key and find every rejection across all apps. Fast and complete. The API doesn't include
   the rejection text (guideline number and reviewer message), so that still comes from the
@@ -39,7 +42,14 @@ unless the user asks for fixes afterwards. You draft; the user acts.
   whether to check this project before submitting or look up rejections in App Store
   Connect. Otherwise go to rejections.
 
-**For rejections, choose the mode.** Check for a key first, quietly.
+**For rejections, choose the mode.** First, if you have a shell on the user's Mac, check
+quietly for Helm's CLI: `command -v helm-asc`. If it's there, use **H. Rejections with Helm
+CLI** for the reasons and history, and also run the API key check below if a key is set up
+(it adds build and review-detail data). Don't ask. If you can't check (no macOS shell), you
+can add a third choice to the question below: "3. **Use Helm** (if you have Helm Pro): its
+helm-asc tool reads all your rejection messages."
+
+Then check for a key, quietly.
 
 If this skill was installed as a plugin, the user may have saved their key settings in it:
 Key ID `${user_config.asc_key_id}`, Issuer ID `${user_config.asc_issuer_id}`, key file
@@ -117,14 +127,14 @@ and review notes were provided (yes/no only).
 resubmitted, App Store Connect reuses it and it ends up approved, so most past rejections leave
 no trace in the API (in testing, an account with known past rejections scanned as zero).
 So: use the scan for what's open now, and when the user wants past rejections (for a history
-or for the submission check), get them from the App Review pages in the browser
-(`references/browser-mode.md`, step 3) or have the user paste them. Say this plainly if the
+or for the submission check), get them from Helm's CLI if available (section H), from the App
+Review pages in the browser (`references/browser-mode.md`, step 3), or have the user paste them. Say this plainly if the
 scan comes back empty and the user expected rejections.
 
 ### A2. Get the rejection message for each finding
 
-Follow `references/resolution-center.md`: read it in the browser if a browser tool is
-available, otherwise ask the user to paste it with the wording given there. One request
+Follow `references/resolution-center.md`: use Helm's CLI if available (section H), else read
+it in the browser if a browser tool is available, otherwise ask the user to paste it with the wording given there. One request
 covering every rejected submission, labelled by app and version. Then go to **C**.
 
 ---
@@ -134,6 +144,16 @@ covering every rejected submission, labelled by app and version. Then go to **C*
 Follow `references/browser-mode.md`: open App Store Connect, the user signs in, list their
 apps, open each one marked Rejected or Unresolved Issues, read the App Review message, and
 save each to `rc_<app>_<version>.txt`. Read only. Then go to **C**.
+
+---
+
+## H. Rejections with Helm CLI
+
+Follow `references/helm-cli.md`: learn `helm-asc`'s commands from its own `--help` (don't
+guess names), run only commands that list or read, with `--agent` for JSON, and save each
+rejected submission's message to `rc_<app>_<version>_<date>.txt`. It never submits, replies or
+changes anything through Helm. Without a shell on the Mac, hand the user the commands to run
+in Terminal and read the files they save. Then go to **C**.
 
 ---
 
@@ -183,8 +203,9 @@ inference. Then go to **E**.
 Follow `references/preflight.md`:
 
 1. Load the rejection history (`python scripts/history.py list`). If there is none, offer once
-   to pull past rejections from App Store Connect first (the rejections flow above), then
-   import that report into the history and continue.
+   to pull past rejections first: from Helm's CLI if the user has it (section H, the most
+   complete), otherwise from the browser or pasted messages. Then import that report into the
+   history and continue.
 2. Run `python scripts/preflight_scan.py <project> --out preflight.json`. It uses the history
    automatically and adds `history_check`.
 3. For each past rejection, read what the reviewer said then and look for the same thing in
@@ -230,6 +251,7 @@ next time. Don't repeat the offer if they decline.
 - `scripts/selftest.py` - offline tests; run after editing the scripts.
 - `run.sh` - one-command local scan for the user's Terminal.
 - `references/setup.md` - creating and storing the API key; error table.
+- `references/helm-cli.md` - reading rejections with Helm Pro's helm-asc CLI, read-only.
 - `references/browser-mode.md` - checking App Store Connect in the browser.
 - `references/resolution-center.md` - getting the message text: browser, paste, or none.
 - `references/preflight.md` - the submission check, what it covers, confirming findings.

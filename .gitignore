@@ -8,6 +8,8 @@ appreview-report.html
 report.json
 preflight.json
 rc_*.txt
+helm-*.json
+appreview-helm/
 .venv/
 __pycache__/
 *.pyc

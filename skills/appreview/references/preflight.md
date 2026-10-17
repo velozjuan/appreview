@@ -19,7 +19,8 @@ rejections report is made (`history.py import report.json`).
 - **History exists**: run `python scripts/history.py list` and tell the user in one line how
   many past rejections you'll check against.
 - **No history**: offer once, briefly: "Want me to pull your past rejections from App Store
-  Connect first, so I can check this project against them?" If yes, collect them from the App
+  Connect first, so I can check this project against them?" If yes, collect them with Helm's
+  CLI if the user has it (`helm-cli.md`, the most complete source), otherwise from the App
   Review pages in the browser (`browser-mode.md`, step 3, history), or ask the user to paste
   the messages. The API key alone isn't enough here: it only shows rejections that are still
   open. Build a rejections report, import it into the history, then come back here. If no,

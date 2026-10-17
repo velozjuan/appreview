@@ -56,9 +56,19 @@ You can also paste an App Review message into the chat and ask what to do.
 
 ## Connect your App Store Connect account
 
-Claude asks the first time. Two options:
+Claude asks the first time. Three options:
 
-### 1. API key
+### 1. Helm CLI (most complete, if you use Helm)
+
+If you use [Helm for App Store Connect](https://helm-app.com) with Helm Pro, install its `helm-asc` command-line tool from Helm's **Settings** on your Mac. `/appreview` finds it on its own and uses it to read the App Review messages for all your apps, including past rejections that were later fixed, which Apple's API can't return.
+
+- It uses the account you already connected in Helm. No extra key setup.
+- The skill only runs helm-asc commands that read. It never submits, replies or changes anything through Helm.
+- It runs on your Mac, so use it from Claude Code on your Mac. In other setups, Claude gives you the commands to paste into Terminal.
+
+Helm is a separate product by another developer and isn't required.
+
+### 2. API key
 
 Fastest, and the best way to see what's open right now across all your apps.
 
@@ -83,13 +93,13 @@ Never paste the contents of the `.p8` file into a chat. If it ever leaks, revoke
 
 The API key works where Claude runs commands on your own computer, as in Claude Code. Cloud sandboxes, such as code execution on claude.ai, usually block Apple's API; there, use the browser option, or the skill gives you a one-line command to run in your Terminal.
 
-### 2. Your browser (no key)
+### 3. Your browser (no key)
 
 Claude opens App Store Connect in a browser where you're signed in, goes through your apps and reads the App Review messages. You sign in yourself; Claude never asks for your Apple ID password or verification codes, and it doesn't click anything that changes your apps. This needs a browser Claude can use, such as the Claude desktop app's built-in browser or Claude in Chrome.
 
 ### Past rejections
 
-Apple's API only shows rejections that are still open. Once a rejection is fixed and the app is approved, it disappears from the API. To build your rejection history (used by `/appreview check`), the skill reads past App Review messages in your browser, or you paste them in. The history is saved on your computer at `~/.appreview/history.json`.
+Apple's API only shows rejections that are still open. Once a rejection is fixed and the app is approved, it disappears from the API. To build your rejection history (used by `/appreview check`), the skill reads past App Review messages with Helm's CLI if you have it, otherwise in your browser, or you paste them in. The history is saved on your computer at `~/.appreview/history.json`.
 
 ## What the submission check looks for
 
@@ -120,13 +130,16 @@ It works with Swift and Objective-C projects and with React Native, Expo, Flutte
 
 **"The network here blocks api.appstoreconnect.apple.com."** You're in a sandbox. Use Claude Code on your computer, the Terminal command the skill gives you, or browser mode.
 
-**The scan finds no rejections, but you had some.** They were resolved, so Apple's API no longer shows them. Use browser mode to read them.
+**The scan finds no rejections, but you had some.** They were resolved, so Apple's API no longer shows them. Use Helm's CLI or browser mode to read them.
+
+**helm-asc isn't found.** It comes with Helm Pro and is installed from Helm's Settings on your Mac. It only works on that Mac, not in cloud sandboxes.
 
 **`/appreview` isn't listed.** Restart Claude Code. Then check `/plugin` for a plugin install, or that `~/.claude/skills/appreview/SKILL.md` exists for other installs.
 
 ## Data and network use
 
 - **API key mode:** signed, read-only requests (`GET` only), with a token made from your key, go to Apple at `api.appstoreconnect.apple.com`.
+- **Helm CLI mode:** Claude runs read-only `helm-asc` commands on your Mac. Helm makes the requests to Apple with the account you connected in Helm. See [Helm's privacy policy](https://helm-app.com/privacy/) for how Helm handles data.
 - **Browser mode:** Claude reads `appstoreconnect.apple.com` in your own signed-in browser.
 - **Guideline text:** Claude reads the public page at `developer.apple.com`. Nothing is sent.
 - **Submission check:** your project's source files are read on your computer and sent nowhere else.
