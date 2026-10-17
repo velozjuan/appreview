@@ -1,4 +1,4 @@
-<img src="icon.png" alt="Veloz App Review icon" width="96">
+![veloz](veloz-logo.png)
 
 # Veloz App Review
 
@@ -138,6 +138,7 @@ skills/appreview/SKILL.md         the skill
 skills/appreview/scripts/         Python scripts: API client, scans, report
 skills/appreview/references/      guideline playbook, setup and workflow notes
 PRIVACY.md                        privacy policy
+icon.png, veloz-logo.png          listing icon and brand logo
 ```
 
 To test the scripts offline against a mock of the App Store Connect API:
