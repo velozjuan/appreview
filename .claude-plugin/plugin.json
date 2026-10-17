@@ -1,7 +1,7 @@
 {
   "name": "veloz-appreview",
   "displayName": "Veloz App Review",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Find and fix App Store rejections: scans your App Store Connect account, maps each rejection to the App Review Guidelines with fixes and reply drafts, and checks an iOS project against Apple's rules and your past rejections before you submit.",
   "author": {
     "name": "Juan Veloz",

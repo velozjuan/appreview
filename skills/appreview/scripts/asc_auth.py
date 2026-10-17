@@ -18,14 +18,19 @@ If neither key variable is set, the usual Apple locations are searched for
 AuthKey_<KEY_ID>.p8: ./private_keys, ~/private_keys, ~/.private_keys,
 ~/.appstoreconnect/private_keys.
 
-Requires: Python 3.9+ and the `cryptography` package (pip install cryptography).
+Requires: Python 3.9+. Signing uses the `cryptography` package if it's installed,
+otherwise the `openssl` command that ships with macOS and most Linux systems, so nothing
+extra has to be installed. Set APPREVIEW_SIGNER=openssl or =cryptography to force one.
 """
 from __future__ import annotations
 
 import base64
 import json
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -91,6 +96,7 @@ class Credentials:
     key_id: str
     private_key_pem: bytes
     issuer_id: Optional[str] = None  # None => individual key
+    key_path: Optional[Path] = None  # set when the key came from a file
 
 
 def _search_key_file(key_id: str) -> Optional[Path]:
@@ -118,6 +124,7 @@ def load_credentials(env: Mapping[str, str] = os.environ) -> Credentials:
     issuer = (env.get("ASC_ISSUER_ID") or "").strip() or None
 
     pem_text = env.get("ASC_PRIVATE_KEY")
+    path = None
     if pem_text:
         pem = pem_text.replace("\\n", "\n").encode()
     else:
@@ -131,25 +138,92 @@ def load_credentials(env: Mapping[str, str] = os.environ) -> Credentials:
         pem = path.read_bytes()
     if b"PRIVATE KEY" not in pem:
         raise AscConfigError("The private key file does not look like a PEM .p8 key.")
-    return Credentials(key_id=key_id, private_key_pem=pem, issuer_id=issuer)
+    return Credentials(key_id=key_id, private_key_pem=pem, issuer_id=issuer, key_path=path)
 
 
 def _b64url(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
 
 
+def _der_ecdsa_to_raw(der: bytes) -> bytes:
+    """ECDSA signature: DER SEQUENCE{INTEGER r, INTEGER s} -> 64-byte r||s (JWT ES256)."""
+    def read_len(buf: bytes, i: int):
+        n = buf[i]; i += 1
+        if n & 0x80:
+            k = n & 0x7F
+            n = int.from_bytes(buf[i:i + k], "big"); i += k
+        return n, i
+    if not der or der[0] != 0x30:
+        raise AscConfigError("Unexpected signature format from openssl.")
+    _, i = read_len(der, 1)
+    out = b""
+    for _ in range(2):
+        if der[i] != 0x02:
+            raise AscConfigError("Unexpected signature format from openssl.")
+        n, i = read_len(der, i + 1)
+        val = der[i:i + n].lstrip(b"\x00"); i += n
+        if len(val) > 32:
+            raise AscConfigError("The key is not a P-256 key.")
+        out += val.rjust(32, b"\x00")
+    return out
+
+
+def _sign_with_cryptography(pem: bytes, data: bytes) -> bytes:
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
+
+    key = serialization.load_pem_private_key(pem, password=None)
+    if not isinstance(key, ec.EllipticCurvePrivateKey):
+        raise AscConfigError("The key is not an EC (P-256) private key.")
+    r, s = decode_dss_signature(key.sign(data, ec.ECDSA(hashes.SHA256())))
+    return r.to_bytes(32, "big") + s.to_bytes(32, "big")
+
+
+def _sign_with_openssl(creds: Credentials, data: bytes) -> bytes:
+    openssl = shutil.which("openssl")
+    if not openssl:
+        raise AscConfigError(
+            "Can't sign the API key: neither the 'cryptography' package nor the 'openssl' "
+            "command is available. Install one (pip install cryptography)."
+        )
+    tmpdir = None
+    key_file = creds.key_path
+    try:
+        if key_file is None:  # key given as text: write it to a private temp file briefly
+            tmpdir = tempfile.mkdtemp(prefix="appreview-")
+            os.chmod(tmpdir, 0o700)
+            key_file = Path(tmpdir) / "key.p8"
+            fd = os.open(key_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "wb") as fh:
+                fh.write(creds.private_key_pem)
+        proc = subprocess.run([openssl, "dgst", "-sha256", "-sign", str(key_file)],
+                              input=data, capture_output=True, timeout=30)
+        if proc.returncode != 0 or not proc.stdout:
+            raise AscConfigError("openssl couldn't sign with this key. Check that the .p8 file "
+                                 "is the one downloaded from App Store Connect.")
+        return _der_ecdsa_to_raw(proc.stdout)
+    finally:
+        if tmpdir:
+            for f in Path(tmpdir).iterdir():
+                f.unlink()
+            os.rmdir(tmpdir)
+
+
+def signer_name() -> str:
+    forced = (os.environ.get("APPREVIEW_SIGNER") or "").strip().lower()
+    if forced in ("openssl", "cryptography"):
+        return forced
+    try:
+        import cryptography  # noqa: F401
+        return "cryptography"
+    except ImportError:
+        return "openssl"
+
+
 def make_token(creds: Credentials, lifetime: int = MAX_LIFETIME_SECONDS,
                now: Optional[float] = None) -> str:
     """Return a signed ES256 JWT. The signature is raw r||s as JWT requires."""
-    try:
-        from cryptography.hazmat.primitives import hashes, serialization
-        from cryptography.hazmat.primitives.asymmetric import ec
-        from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
-    except ImportError as exc:  # pragma: no cover
-        raise AscConfigError(
-            "The 'cryptography' package is required: pip install cryptography"
-        ) from exc
-
     lifetime = max(60, min(int(lifetime), MAX_LIFETIME_SECONDS))
     iat = int(now if now is not None else time.time())
     header = {"alg": "ES256", "kid": creds.key_id, "typ": "JWT"}
@@ -165,11 +239,13 @@ def make_token(creds: Credentials, lifetime: int = MAX_LIFETIME_SECONDS,
         + _b64url(json.dumps(payload, separators=(",", ":")).encode())
     ).encode()
 
-    key = serialization.load_pem_private_key(creds.private_key_pem, password=None)
-    if not isinstance(key, ec.EllipticCurvePrivateKey):
-        raise AscConfigError("The key is not an EC (P-256) private key.")
-    r, s = decode_dss_signature(key.sign(signing_input, ec.ECDSA(hashes.SHA256())))
-    signature = r.to_bytes(32, "big") + s.to_bytes(32, "big")
+    if signer_name() == "cryptography":
+        try:
+            signature = _sign_with_cryptography(creds.private_key_pem, signing_input)
+        except ImportError as exc:
+            raise AscConfigError("APPREVIEW_SIGNER=cryptography but the package isn't installed.") from exc
+    else:
+        signature = _sign_with_openssl(creds, signing_input)
     return signing_input.decode() + "." + _b64url(signature)
 
 

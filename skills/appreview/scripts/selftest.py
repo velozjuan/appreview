@@ -192,14 +192,33 @@ def main() -> int:
         env = {**os.environ, "ASC_KEY_ID": "TESTKEY123", "ASC_ISSUER_ID": "issuer-uuid",
                "ASC_PRIVATE_KEY_PATH": str(keyfile), "ASC_BASE_URL": BASE}
 
-        # 1. credential check
-        r = subprocess.run([sys.executable, str(HERE / "asc_auth.py")], env=env, capture_output=True, text=True)
-        assert r.returncode == 0 and "OK: authenticated" in r.stdout, r.stdout + r.stderr
+        # 1. credential check, with each signer, key as a file and as text
+        for signer in ("cryptography", "openssl"):
+            for key_env in ({"ASC_PRIVATE_KEY_PATH": str(keyfile)},
+                            {"ASC_PRIVATE_KEY_PATH": "", "ASC_PRIVATE_KEY": keyfile.read_text()}):
+                e2 = {**env, **key_env, "APPREVIEW_SIGNER": signer}
+                r = subprocess.run([sys.executable, str(HERE / "asc_auth.py")], env=e2, capture_output=True, text=True)
+                assert r.returncode == 0 and "OK: authenticated" in r.stdout, (signer, r.stdout + r.stderr)
 
-        # 2. full scan
+        # 1b. openssl signatures: many tokens, each verified (catches r/s padding edge cases)
+        sys.path.insert(0, str(HERE))
+        import asc_auth
+        os.environ["APPREVIEW_SIGNER"] = "openssl"
+        creds = asc_auth.Credentials(key_id="TESTKEY123", private_key_pem=keyfile.read_bytes(),
+                                     issuer_id="issuer-uuid", key_path=keyfile)
+        for _ in range(50):
+            verify_jwt(asc_auth.make_token(creds))
+        creds_txt = asc_auth.Credentials(key_id="TESTKEY123", private_key_pem=keyfile.read_bytes(), issuer_id="issuer-uuid")
+        before = set(Path(tempfile.gettempdir()).glob("appreview-*"))
+        verify_jwt(asc_auth.make_token(creds_txt))
+        assert set(Path(tempfile.gettempdir()).glob("appreview-*")) == before, "temp key not cleaned up"
+        del os.environ["APPREVIEW_SIGNER"]
+        assert asc_auth._der_ecdsa_to_raw(bytes.fromhex("3008020200ff020201ff")) == b"\x00" * 31 + b"\xff" + b"\x00" * 30 + b"\x01\xff"
+
+        # 2. full scan (with the openssl signer, so the fallback runs a whole scan)
         out = tmp / "report"
         r = subprocess.run([sys.executable, str(HERE / "asc_rejections.py"), "--out", str(out)],
-                           env=env, capture_output=True, text=True)
+                           env={**env, "APPREVIEW_SIGNER": "openssl"}, capture_output=True, text=True)
         assert r.returncode == 0, r.stdout + r.stderr
         rep = json.loads((out / "rejections.json").read_text())
         apps = {a["name"]: a for a in rep["apps"]}

@@ -25,8 +25,10 @@ Each ends the same way: findings mapped to guidelines, concrete fixes, and an HT
 published as an artifact.
 
 Script and reference paths below are relative to this skill's folder (when installed as a
-plugin: `${CLAUDE_PLUGIN_ROOT}/skills/appreview/`). The scripts need Python 3.9+; the API
-scripts also need the `cryptography` package.
+plugin: `${CLAUDE_PLUGIN_ROOT}/skills/appreview/`). The scripts need only Python 3.9+, which
+comes with Xcode's Command Line Tools on any Mac used for iOS development. To sign the API key
+they use the `cryptography` package if it's installed, otherwise the built-in `openssl` command,
+so don't install anything for them.
 
 Everything is read-only. This skill never changes the account or the project: no replies
 sent, no resubmissions, no metadata edits, no keys created or revoked, no code changes

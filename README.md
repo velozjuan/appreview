@@ -36,7 +36,7 @@ Choose **one** of these four options. However you install it, the command is `/a
 
 - **Option 4: by hand.** Copy the `skills/appreview` folder to `~/.claude/skills/appreview`.
 
-**Requirements:** Python 3.9 or later. The API key option also needs `pip install cryptography`.
+**Requirements:** Python 3.9 or later, which every Mac with Xcode already has. Nothing else to install.
 
 ## Use it
 
