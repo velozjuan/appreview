@@ -56,11 +56,13 @@ You can also paste an App Review message into the chat and ask what to do.
 
 ## Connect your App Store Connect account
 
-Claude asks the first time. Three options:
+Claude asks the first time. Three options, and you only need one:
 
 ### 1. Helm CLI (most complete, if you use Helm)
 
-If you use [Helm for App Store Connect](https://helm-app.com) with Helm Pro, install its `helm-asc` command-line tool from Helm's **Settings** on your Mac. `/appreview` finds it on its own and uses it to read the App Review messages for all your apps, including past rejections that were later fixed, which Apple's API can't return.
+Optional. If you use [Helm for App Store Connect](https://helm-app.com) with Helm Pro, install its `helm-asc` command-line tool from Helm's **Settings** on your Mac. `/appreview` finds it on its own and uses it to read the App Review messages for all your apps, including past rejections that were later fixed, which Apple's API can't return.
+
+If it doesn't find Helm, Claude asks once whether you want to connect it. Say no and it skips Helm and moves on to the other options.
 
 - It uses the account you already connected in Helm. No extra key setup.
 - The skill only runs helm-asc commands that read. It never submits, replies or changes anything through Helm.

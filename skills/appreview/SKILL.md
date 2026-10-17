@@ -42,14 +42,31 @@ unless the user asks for fixes afterwards. You draft; the user acts.
   whether to check this project before submitting or look up rejections in App Store
   Connect. Otherwise go to rejections.
 
-**For rejections, choose the mode.** First, if you have a shell on the user's Mac, check
-quietly for Helm's CLI: `command -v helm-asc`. If it's there, use **H. Rejections with Helm
-CLI** for the reasons and history, and also run the API key check below if a key is set up
-(it adds build and review-detail data). Don't ask. If you can't check (no macOS shell), you
-can add a third choice to the question below: "3. **Use Helm** (if you have Helm Pro): its
-helm-asc tool reads all your rejection messages."
+**For rejections, choose the mode.** Start with Helm, then the key.
 
-Then check for a key, quietly.
+**Helm (optional).** If you have a shell on the user's Mac, check quietly:
+`command -v helm-asc`.
+
+- **Found:** the user already has Helm's CLI. Use **H. Rejections with Helm CLI** for the
+  reasons and history without asking, and also run the key check below if a key is set up (it
+  adds build and review-detail data).
+- **Not found, or you can't check** (no macOS shell): ask once, with the question tool if the
+  session has one:
+
+  > Do you use **Helm for App Store Connect**? If you have Helm Pro, connecting its helm-asc
+  > tool lets me read all your rejection messages, including past ones. Want to connect it?
+  > - **Yes, connect Helm**
+  > - **No, skip Helm**
+
+  - **Yes:** follow `references/helm-cli.md` step 1 to get it installed (from Helm's Settings
+    on the Mac) or to hand the user the Terminal commands, then use section H.
+  - **No** (or they don't know what Helm is): skip this step. Don't mention Helm again this
+    session, and go straight to the key check.
+
+  If the user already said how they want to connect (key, browser, pasting), don't ask about
+  Helm at all.
+
+**Key.** Check for a key, quietly.
 
 If this skill was installed as a plugin, the user may have saved their key settings in it:
 Key ID `${user_config.asc_key_id}`, Issuer ID `${user_config.asc_issuer_id}`, key file

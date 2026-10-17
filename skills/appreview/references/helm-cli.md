@@ -10,17 +10,25 @@ the best source of rejection reasons and history.
 This skill doesn't install, configure or pay for Helm. It only uses `helm-asc` if the user
 already has it.
 
-## 1. Detect it
+## 1. Detect it, or ask
+
+Helm is optional. Users who don't have it never need it, and the skill works without it.
 
 `helm-asc` runs only on the user's Mac, where Helm is installed and signed in. It won't work
 in a cloud sandbox or a Linux VM, even one linked to the Mac.
 
-- In a shell on the user's Mac (for example Claude Code running locally), run
-  `command -v helm-asc`. If it prints a path, it's installed.
-- If you have no macOS shell, ask once: "Do you use Helm with Helm Pro? If so, its helm-asc
-  tool can read all your rejection messages." If yes, use the Terminal handoff in step 5.
-- If the command isn't found but the user has Helm Pro, tell them to install it from Helm's
-  **Settings** on the Mac, then try again.
+- **In a shell on the user's Mac** (for example Claude Code running locally), run
+  `command -v helm-asc`. If it prints a path, it's installed: use it without asking.
+- **Not installed, or no macOS shell:** ask once whether they want to connect Helm (the
+  question is in SKILL.md, step 0). If they say no, skip Helm for the rest of the session and
+  don't bring it up again.
+- **They want to connect it:**
+  - They have Helm Pro but no CLI yet: tell them to open Helm on the Mac, go to **Settings**,
+    and install the command-line tool (helm-asc), then check again.
+  - They have Helm but not Pro: the CLI needs Helm Pro. Say so in one line, and continue
+    without Helm unless they choose to upgrade.
+  - They don't use Helm: continue without it. Don't push them to buy it.
+  - No macOS shell here: use the Terminal handoff in step 5.
 
 Don't confuse it with `helm`, the unrelated Kubernetes tool.
 
