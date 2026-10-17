@@ -14,16 +14,32 @@ It only reads. It never replies to App Review, resubmits, edits your App Store l
 
 ## Install
 
-Pick one:
+Pick one. However you install it, the command is `/appreview` and it shows up in `/skills`.
 
-| Method | Command | Best for |
-|---|---|---|
-| Anthropic's directory | Add **Veloz App Review** on claude.ai (review pending) | Claude apps, Cowork and Claude Code, kept in sync |
-| Claude Code plugin | `claude plugin marketplace add velozjuan/appreview`<br>`claude plugin install veloz-appreview@veloz` | Claude Code, with key settings in `/config` |
-| `skills` CLI | `npx skills add https://github.com/velozjuan/appreview --skill appreview` | Claude Code, Codex, Cursor and other agents that read skills (add `-g` for all projects) |
-| By hand | Copy `skills/appreview` to `~/.claude/skills/appreview` | Anyone |
+### Claude Code plugin
 
-However you install it, the command is `/appreview` and it shows up in `/skills`.
+Recommended for Claude Code. Your API key settings live in `/config`.
+
+```bash
+claude plugin marketplace add velozjuan/appreview
+claude plugin install veloz-appreview@veloz
+```
+
+### skills CLI
+
+Works with Claude Code, Codex, Cursor and other agents that read skills. Add `-g` to install it for all your projects.
+
+```bash
+npx skills add https://github.com/velozjuan/appreview --skill appreview
+```
+
+### Anthropic's directory
+
+Review pending. Once it's listed, add **Veloz App Review** on claude.ai and it syncs to the Claude apps, Cowork and Claude Code.
+
+### By hand
+
+Copy the `skills/appreview` folder to `~/.claude/skills/appreview`.
 
 **Requirements:** Python 3.9 or later. The API key option also needs `pip install cryptography`.
 
@@ -77,19 +93,14 @@ Apple's API only shows rejections that are still open. Once a rejection is fixed
 
 ## What the submission check looks for
 
-| Guideline | Check |
-|---|---|
-| 5.1.1 | Permission APIs used without an explanation string, or with a vague one |
-| 5.1.1 / ITMS-91053 | Required-reason APIs without a privacy manifest entry |
-| 5.1.1(v) | Account sign-up with no in-app account deletion |
-| 5.1.1(i) | No privacy policy link in the app |
-| 4.8 | Google or Facebook login without Sign in with Apple or an equivalent |
-| 3.1.1 / 3.1.2 | In-app purchases without Restore; subscriptions without terms links; outside checkouts |
-| 5.1.2 | Advertising identifier or ad SDKs without the App Tracking Transparency prompt |
-| 2.1 | Placeholder text, staging or localhost servers |
-| 1.2 | Posting or chat without report and block |
-| 2.5.1 / 2.5.2 | Private API patterns, hot-patching frameworks |
-| 4.2 | Very small apps built around a web view |
+- **Privacy (5.1.1):** permission prompts without an explanation, or with a vague one; a missing privacy manifest (ITMS-91053); sign-up with no in-app account deletion; no privacy policy link in the app.
+- **Login (4.8):** Google or Facebook login without Sign in with Apple or an equivalent.
+- **Payments (3.1.1, 3.1.2):** in-app purchases without Restore, subscriptions without terms links, checkouts outside the App Store.
+- **Tracking (5.1.2):** the advertising identifier or ad SDKs without the App Tracking Transparency prompt.
+- **Completeness (2.1):** placeholder text, staging or localhost servers.
+- **User content (1.2):** posting or chat without report and block.
+- **Code (2.5.1, 2.5.2):** private API patterns and hot-patching frameworks.
+- **Minimum functionality (4.2):** very small apps built around a web view.
 
 Plus your own history: each past rejection is checked again against the project and marked **same problem found**, **check by hand** or **looks fixed**.
 
@@ -97,24 +108,24 @@ It works with Swift and Objective-C projects and with React Native, Expo, Flutte
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---|---|
-| `401` when checking the key | The Key ID, Issuer ID and `.p8` don't match, the key was revoked, or your computer's clock is off. For an individual key, leave the Issuer ID empty. |
-| `403` | The key's role can't read review data. Use **App Manager** or **Admin**. |
-| "The network here blocks api.appstoreconnect.apple.com" | You're in a sandbox. Use Claude Code on your computer, the Terminal command the skill gives you, or browser mode. |
-| The scan finds no rejections but you had some | They were resolved, so Apple's API no longer shows them. Use browser mode to read them. |
-| `/appreview` isn't listed | Restart Claude Code, or check `/plugin` (plugin install) or `~/.claude/skills/appreview/SKILL.md` (other installs). |
+**Error 401 when checking the key.** The Key ID, Issuer ID and `.p8` file don't match, the key was revoked, or your computer's clock is off. For an individual key, leave the Issuer ID empty.
+
+**Error 403.** The key's role can't read review data. Use a key with the **App Manager** or **Admin** role.
+
+**"The network here blocks api.appstoreconnect.apple.com."** You're in a sandbox. Use Claude Code on your computer, the Terminal command the skill gives you, or browser mode.
+
+**The scan finds no rejections, but you had some.** They were resolved, so Apple's API no longer shows them. Use browser mode to read them.
+
+**`/appreview` isn't listed.** Restart Claude Code. Then check `/plugin` for a plugin install, or that `~/.claude/skills/appreview/SKILL.md` exists for other installs.
 
 ## Data and network use
 
-| What | Where it goes | When |
-|---|---|---|
-| Signed, read-only requests (`GET` only) with a token made from your API key | `api.appstoreconnect.apple.com` (Apple) | API key mode |
-| Your browser session, read only | `appstoreconnect.apple.com` (Apple), in your own browser | Browser mode |
-| Nothing (just reads the public page) | `developer.apple.com` | To check the current guideline text |
-| Your project's source files, read locally | Nowhere: the scan runs on your machine | Submission check |
-| Rejection history (app name, bundle ID, version, date, guideline, reviewer's words) | `~/.appreview/history.json` on your computer | After a rejections report |
-| Report page fonts | `fonts.googleapis.com` / `fonts.gstatic.com`, when the report is opened | Report |
+- **API key mode:** signed, read-only requests (`GET` only), with a token made from your key, go to Apple at `api.appstoreconnect.apple.com`.
+- **Browser mode:** Claude reads `appstoreconnect.apple.com` in your own signed-in browser.
+- **Guideline text:** Claude reads the public page at `developer.apple.com`. Nothing is sent.
+- **Submission check:** your project's source files are read on your computer and sent nowhere else.
+- **Rejection history:** app name, bundle ID, version, date, guideline and the reviewer's words are saved to `~/.appreview/history.json` on your computer.
+- **Report page:** fonts load from `fonts.googleapis.com` and `fonts.gstatic.com` when you open a report.
 
 The key file is read where you keep it, to sign requests, and is never copied, uploaded or stored by the skill. Reports and the history never contain passwords, demo account credentials, contact details or keys, and code snippets in reports have long tokens masked. Claude sees what the skill reads, as in any Claude session. Full details: [PRIVACY.md](PRIVACY.md).
 
