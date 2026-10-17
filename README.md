@@ -93,14 +93,20 @@ Apple's API only shows rejections that are still open. Once a rejection is fixed
 
 ## What the submission check looks for
 
-- **Privacy (5.1.1):** permission prompts without an explanation, or with a vague one; a missing privacy manifest (ITMS-91053); sign-up with no in-app account deletion; no privacy policy link in the app.
-- **Login (4.8):** Google or Facebook login without Sign in with Apple or an equivalent.
-- **Payments (3.1.1, 3.1.2):** in-app purchases without Restore, subscriptions without terms links, checkouts outside the App Store.
-- **Tracking (5.1.2):** the advertising identifier or ad SDKs without the App Tracking Transparency prompt.
-- **Completeness (2.1):** placeholder text, staging or localhost servers.
-- **User content (1.2):** posting or chat without report and block.
-- **Code (2.5.1, 2.5.2):** private API patterns and hot-patching frameworks.
-- **Minimum functionality (4.2):** very small apps built around a web view.
+| Area | Guideline | What it flags |
+|---|---|---|
+| Privacy | 5.1.1 | Permission prompts without an explanation, or with a vague one |
+| Privacy | 5.1.1 (ITMS-91053) | Missing privacy manifest |
+| Privacy | 5.1.1(v) | Sign-up with no in-app account deletion |
+| Privacy | 5.1.1(i) | No privacy policy link in the app |
+| Login | 4.8 | Google or Facebook login without Sign in with Apple |
+| Payments | 3.1.1 | In-app purchases without Restore; checkouts outside the App Store |
+| Payments | 3.1.2 | Subscriptions without terms links |
+| Tracking | 5.1.2 | Advertising identifier or ad SDKs without the tracking prompt |
+| Completeness | 2.1 | Placeholder text; staging or localhost servers |
+| User content | 1.2 | Posting or chat without report and block |
+| Code | 2.5.1, 2.5.2 | Private API patterns; hot-patching frameworks |
+| Minimum functionality | 4.2 | Very small apps built around a web view |
 
 Plus your own history: each past rejection is checked again against the project and marked **same problem found**, **check by hand** or **looks fixed**.
 
