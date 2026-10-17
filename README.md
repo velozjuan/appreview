@@ -178,3 +178,9 @@ Issues and suggestions: [github.com/velozjuan/appreview/issues](https://github.c
 ## License
 
 MIT. Not affiliated with or endorsed by Apple. App Store, App Store Connect and iOS are trademarks of Apple Inc.
+
+## Follow
+
+Made by Juan Veloz. More tools and app-building videos on YouTube and X:
+
+[![YouTube: @velozdev](https://img.shields.io/badge/YouTube-%40velozdev-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/@velozdev) [![X: @velozdev](https://img.shields.io/badge/X-%40velozdev-000000?logo=x&logoColor=white)](https://x.com/velozdev)
