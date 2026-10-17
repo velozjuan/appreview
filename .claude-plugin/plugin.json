@@ -1,0 +1,36 @@
+{
+  "name": "appreview",
+  "displayName": "App Review",
+  "version": "1.0.0",
+  "description": "Find and fix App Store rejections: scans your App Store Connect account, maps each rejection to the App Review Guidelines with fixes and reply drafts, and checks an iOS project against Apple's rules and your past rejections before you submit.",
+  "author": {
+    "name": "Juan Veloz",
+    "url": "https://github.com/velozjuan"
+  },
+  "homepage": "https://github.com/velozjuan/appreview",
+  "repository": "https://github.com/velozjuan/appreview",
+  "documentationUrl": "https://github.com/velozjuan/appreview#readme",
+  "supportUrl": "https://github.com/velozjuan/appreview/issues",
+  "license": "MIT",
+  "keywords": ["app-store", "app-review", "ios", "app-store-connect", "rejection", "xcode", "swift"],
+  "userConfig": {
+    "asc_key_id": {
+      "type": "string",
+      "title": "App Store Connect Key ID",
+      "description": "Optional. The Key ID of your App Store Connect API key (Users and Access > Integrations). Leave blank to check App Store Connect in the browser instead.",
+      "required": false
+    },
+    "asc_issuer_id": {
+      "type": "string",
+      "title": "App Store Connect Issuer ID",
+      "description": "Optional. Shown at the top of the Integrations page. Leave blank for an individual API key.",
+      "required": false
+    },
+    "asc_private_key_path": {
+      "type": "file",
+      "title": "API key file (.p8)",
+      "description": "Optional. Location of your AuthKey_XXXX.p8 file on this computer. Only the location is stored; the file stays where it is.",
+      "required": false
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# Never commit App Store Connect keys
+*.p8
+private_keys/
+
+# Local output and environments
+asc-rejections-report/
+appreview-report.html
+report.json
+preflight.json
+rc_*.txt
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
