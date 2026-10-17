@@ -14,32 +14,27 @@ It only reads. It never replies to App Review, resubmits, edits your App Store l
 
 ## Install
 
-Pick one. However you install it, the command is `/appreview` and it shows up in `/skills`.
+Choose **one** of these four options. However you install it, the command is `/appreview` and it shows up in `/skills`.
 
-### Claude Code plugin
+- **Option 1: Claude Code plugin** (recommended for Claude Code). Your API key settings live in `/config`. Run both commands:
 
-Recommended for Claude Code. Your API key settings live in `/config`.
+  ```bash
+  claude plugin marketplace add velozjuan/appreview
+  ```
 
-```bash
-claude plugin marketplace add velozjuan/appreview
-claude plugin install veloz-appreview@veloz
-```
+  ```bash
+  claude plugin install veloz-appreview@veloz
+  ```
 
-### skills CLI
+- **Option 2: skills CLI.** Works with Claude Code, Codex, Cursor and other agents that read skills. Add `-g` to install it for all your projects.
 
-Works with Claude Code, Codex, Cursor and other agents that read skills. Add `-g` to install it for all your projects.
+  ```bash
+  npx skills add https://github.com/velozjuan/appreview --skill appreview
+  ```
 
-```bash
-npx skills add https://github.com/velozjuan/appreview --skill appreview
-```
+- **Option 3: Anthropic's directory** (review pending). Once it's listed, add **Veloz App Review** on claude.ai and it syncs to the Claude apps, Cowork and Claude Code.
 
-### Anthropic's directory
-
-Review pending. Once it's listed, add **Veloz App Review** on claude.ai and it syncs to the Claude apps, Cowork and Claude Code.
-
-### By hand
-
-Copy the `skills/appreview` folder to `~/.claude/skills/appreview`.
+- **Option 4: by hand.** Copy the `skills/appreview` folder to `~/.claude/skills/appreview`.
 
 **Requirements:** Python 3.9 or later. The API key option also needs `pip install cryptography`.
 
