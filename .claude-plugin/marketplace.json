@@ -1,5 +1,5 @@
 {
-  "name": "appreview",
+  "name": "veloz",
   "description": "App Store review tools for Claude Code",
   "owner": {
     "name": "Juan Veloz",
@@ -7,7 +7,7 @@
   },
   "plugins": [
     {
-      "name": "appreview",
+      "name": "veloz-appreview",
       "source": "./",
       "description": "Find and fix App Store rejections, and check an iOS project before you submit."
     }

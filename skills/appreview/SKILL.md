@@ -77,7 +77,7 @@ If the user says what they want up front, skip the question.
 
 Walk them through `references/setup.md` one step at a time, waiting for each step: create the
 key (App Manager role), download the `.p8`, save it, then either enter the three values in the
-plugin's settings (`/config`, under appreview) or set the environment variables, and confirm
+plugin's settings (`/config`, under Veloz App Review) or set the environment variables, and confirm
 with `scripts/asc_auth.py`. If a browser tool is available you may open the Integrations
 page for them; they create and download the key themselves.
 

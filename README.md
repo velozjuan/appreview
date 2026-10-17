@@ -1,6 +1,6 @@
 <img src="icon.png" alt="App Review icon" width="96">
 
-# App Review for Claude
+# Veloz App Review
 
 Find out why your iOS app was rejected, how to fix it, and whether your next build will be rejected for the same thing.
 
@@ -14,13 +14,13 @@ Everything is read-only. It never replies to App Review, resubmits, edits your A
 
 ## Install
 
-**From Anthropic's directory** (once listed): add **App Review** on claude.ai. It syncs to Claude Code and appears in `/skills` as `/appreview`.
+**From Anthropic's directory** (once listed): add **Veloz App Review** on claude.ai. It syncs to Claude Code and appears in `/skills` as `/appreview`.
 
 **From this repository, in your terminal:**
 
 ```bash
 claude plugin marketplace add velozjuan/appreview
-claude plugin install appreview@appreview
+claude plugin install veloz-appreview@veloz
 ```
 
 **By hand:** copy `skills/appreview` into `~/.claude/skills/appreview`.

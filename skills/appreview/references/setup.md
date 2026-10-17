@@ -35,8 +35,8 @@ chat, commit it, or email it. If it leaks, revoke it in the same Integrations pa
 ## 3. Point the scripts at it
 
 **Installed as a plugin in Claude Code?** Claude Code asks for the Key ID, Issuer ID and key
-file when the plugin is enabled. To change them later, run `/config` and find the appreview
-settings. Nothing else to set.
+file when the plugin is enabled. To change them later, run `/config` and find the Veloz App
+Review settings. Nothing else to set.
 
 **Otherwise**, set environment variables:
 
