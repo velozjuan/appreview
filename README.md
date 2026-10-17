@@ -23,6 +23,14 @@ claude plugin marketplace add velozjuan/appreview
 claude plugin install veloz-appreview@veloz
 ```
 
+**With the `skills` CLI** (works with Claude Code, Codex, Cursor and other agents that read skills):
+
+```bash
+npx skills add https://github.com/velozjuan/appreview --skill appreview
+```
+
+Add `-g` to install it for all your projects instead of only the current one.
+
 **By hand:** copy `skills/appreview` into `~/.claude/skills/appreview`.
 
 You need Python 3.9 or later. Connecting with an API key also needs the `cryptography` package (`pip install cryptography`).
