@@ -1,3 +1,5 @@
+<img src="icon.png" alt="App Review icon" width="96">
+
 # App Review for Claude
 
 Find out why your iOS app was rejected, how to fix it, and whether your next build will be rejected for the same thing.

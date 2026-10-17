@@ -12,7 +12,16 @@
   "documentationUrl": "https://github.com/velozjuan/appreview#readme",
   "supportUrl": "https://github.com/velozjuan/appreview/issues",
   "license": "MIT",
-  "keywords": ["app-store", "app-review", "ios", "app-store-connect", "rejection", "xcode", "swift"],
+  "keywords": [
+    "app-store",
+    "app-review",
+    "ios",
+    "app-store-connect",
+    "rejection",
+    "xcode",
+    "swift"
+  ],
+  "icon": "./icon.png",
   "userConfig": {
     "asc_key_id": {
       "type": "string",
