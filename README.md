@@ -49,7 +49,7 @@ What the skill reads, sends and stores:
 | Rejection history (app name, bundle ID, version, date, guideline, reviewer's words) | `~/.appreview/history.json` on your computer | After a rejections report |
 | Report page fonts | `fonts.googleapis.com` / `fonts.gstatic.com`, when the report is opened | Report |
 
-The key file is read from where you keep it to sign requests and is never copied, uploaded or stored by the skill. Reports and the history never contain passwords, demo account credentials, contact details or keys, and code snippets in reports have long tokens masked. Claude itself sees what the skill reads, as with any Claude Code session.
+The key file is read from where you keep it to sign requests and is never copied, uploaded or stored by the skill. Reports and the history never contain passwords, demo account credentials, contact details or keys, and code snippets in reports have long tokens masked. Claude itself sees what the skill reads, as with any Claude Code session. Full details: [PRIVACY.md](PRIVACY.md).
 
 ## What the submission check looks for
 
