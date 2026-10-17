@@ -67,17 +67,18 @@ You can also just ask, for example:
 
 Claude asks the first time. Three options, and you only need one:
 
-### 1. Helm CLI (most complete, if you use Helm)
+### 1. Helm CLI (optional)
 
-Optional. If you use [Helm for App Store Connect](https://helm-app.com) with Helm Pro, install its `helm-asc` command-line tool from Helm's **Settings** on your Mac. `/appreview` finds it on its own and uses it to read the App Review messages for all your apps, including past rejections that were later fixed, which Apple's API can't return.
+> [!NOTE]
+> **Optional, and made by another developer.** Helm for App Store Connect is a separate paid product by a different company, not part of this skill. You don't need it: the API key and browser options below work without it.
+
+If you use [Helm for App Store Connect](https://helm-app.com) with Helm Pro, install its `helm-asc` command-line tool from Helm's **Settings** on your Mac. `/appreview` finds it on its own and uses it to read the App Review messages for all your apps, including past rejections that were later fixed, which Apple's API can't return.
 
 If it doesn't find Helm, Claude asks once whether you want to connect it. Say no and it skips Helm and moves on to the other options.
 
 - It uses the account you already connected in Helm. No extra key setup.
 - The skill only runs helm-asc commands that read. It never submits, replies or changes anything through Helm.
 - It runs on your Mac, so use it from Claude Code on your Mac. In other setups, Claude gives you the commands to paste into Terminal.
-
-Helm is a separate product by another developer and isn't required.
 
 ### 2. API key
 
