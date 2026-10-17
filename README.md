@@ -45,14 +45,23 @@ Copy the `skills/appreview` folder to `~/.claude/skills/appreview`.
 
 ## Use it
 
+Explain the rejections in your account:
+
 ```
-/appreview                      explain the rejections in your account
-/appreview check                check the project in this folder before submitting
-why was my app rejected for 4.3?
-check this app against my past rejections
+/appreview
 ```
 
-You can also paste an App Review message into the chat and ask what to do.
+Check the project in this folder before submitting:
+
+```
+/appreview check
+```
+
+You can also just ask, for example:
+
+- "Why was my app rejected for 4.3?"
+- "Check this app against my past rejections."
+- Paste an App Review message into the chat and ask what to do.
 
 ## Connect your App Store Connect account
 
